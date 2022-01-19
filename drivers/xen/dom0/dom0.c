@@ -13,9 +13,7 @@
 #include <zephyr/xen/public/hvm/hvm_op.h>
 #include <zephyr/xen/public/hvm/params.h>
 #include <zephyr/xen/public/domctl.h>
-#include <zephyr/xen/public/sysctl.h>
 #include <zephyr/xen/public/xen.h>
-#include <zephyr/cache.h>
 
 #include <zephyr/xen/public/io/console.h>
 
