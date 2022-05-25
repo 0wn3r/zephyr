@@ -18,8 +18,8 @@
 #include <dt-bindings/interrupt-controller/arm-gic.h>
 
 / {
-	model = "XENVM-4.15";
-	compatible = "xen,xenvm-4.15", "xen,xenvm";
+	model = "XENVM-4.16";
+	compatible = "xen,xenvm-4.16", "xen,xenvm";
 	interrupt-parent = <&gic>;
 	#address-cells = <0x02>;
 	#size-cells = <0x02>;
@@ -48,9 +48,9 @@
 		label = "PSCI";
 	};
 
-	ram: memory@50000000 {
+	ram: memory@60000000 {
 		device_type = "mmio-sram";
-		reg = <0x00 0x50000000 0x00 DT_SIZE_M(16)>;
+		reg = <0x00 0x60000000 0x00 DT_SIZE_M(16)>;
 	};
 
 	gic: interrupt-controller@f1010000 {
@@ -72,8 +72,8 @@
 	};
 
 	hypervisor: hypervisor@38000000 {
-		compatible = "xen,xen-4.15", "xen,xen";
-		reg = <0x00 0x48200000 0x00 0x1000000>;
+		compatible = "xen,xen-4.16", "xen,xen";
+		reg = <0x00 0x78080000 0x00 0x1000000>;
 		interrupts = <GIC_PPI 0x0 IRQ_TYPE_EDGE IRQ_DEFAULT_PRIORITY>;
 		interrupt-parent = <&gic>;
 	};
