@@ -30,10 +30,11 @@ void notify_evtchn(evtchn_port_t port);
 /*
  * Allocate event-channel between caller and remote domain
  *
+ * @dom - caller domain domid
  * @remote_dom - remote domain domid
  * @return - local event channel port on success, negative on error
  */
-int alloc_unbound_event_channel(domid_t remote_dom);
+int alloc_unbound_event_channel(domid_t dom, domid_t remote_dom);
 
 /*
  * Allocate local event channel, binded to remote port and attach specified callback
