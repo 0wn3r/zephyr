@@ -29,11 +29,11 @@ static void empty_callback(void *data)
 	events_missed[port] = true;
 }
 
-int alloc_unbound_event_channel(domid_t remote_dom)
+int alloc_unbound_event_channel(domid_t dom, domid_t remote_dom)
 {
 	int rc;
 	struct evtchn_alloc_unbound alloc = {
-		.dom = DOMID_SELF,
+		.dom = dom,
 		.remote_dom = remote_dom,
 	};
 
