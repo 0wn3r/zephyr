@@ -50,7 +50,7 @@
 
 	ram: memory@60000000 {
 		device_type = "mmio-sram";
-		reg = <0x00 0x60000000 0x00 DT_SIZE_M(16)>;
+		reg = <0x00 0x60000000 0x00 DT_SIZE_M(128)>;
 	};
 
 	gic: interrupt-controller@f1010000 {
@@ -73,7 +73,7 @@
 
 	hypervisor: hypervisor@38000000 {
 		compatible = "xen,xen-4.16", "xen,xen";
-		reg = <0x00 0x78080000 0x00 0x1000000>;
+		reg = <0x00 0x78080000 0x00 0x40000>;
 		interrupts = <GIC_PPI 0x0 IRQ_TYPE_EDGE IRQ_DEFAULT_PRIORITY>;
 		interrupt-parent = <&gic>;
 	};
