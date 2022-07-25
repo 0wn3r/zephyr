@@ -21,8 +21,13 @@
 LOG_MODULE_REGISTER(clock_control_rcar);
 
 struct r8a7795_cpg_mssr_config {
-	mm_reg_t base_address;
+	DEVICE_MMIO_ROM;
 };
+
+struct r8a7795_cpg_mssr_data {
+	DEVICE_MMIO_RAM;
+};
+
 
 int r8a7795_cpg_core_clock_endisable(uint32_t base_address, uint32_t module,
 				     uint32_t rate, bool enable)
@@ -70,19 +75,18 @@ unlock:
 int r8a7795_cpg_mssr_start_stop(const struct device *dev,
 				clock_control_subsys_t sys, bool enable)
 {
-	const struct r8a7795_cpg_mssr_config *config = dev->config;
 	struct rcar_cpg_clk *clk = (struct rcar_cpg_clk *)sys;
 	uint32_t reg = clk->module / 100;
 	uint32_t bit = clk->module % 100;
 	int ret = -EINVAL;
 
-	__ASSERT((bit < 32) && reg < ARRAY_SIZE(mstpcr),
+	__ASSERT((bit < 32) && reg < ARRAY_SIZE(smstpcr),
 		 "Invalid module number for cpg clock: %d", clk->module);
 
 	if (clk->domain == CPG_MOD) {
-		ret = rcar_cpg_mstp_clock_endisable(config->base_address, bit, reg, enable);
+		ret = rcar_cpg_mstp_clock_endisable(DEVICE_MMIO_GET(dev), bit, reg, enable);
 	} else if (clk->domain == CPG_CORE) {
-		ret = r8a7795_cpg_core_clock_endisable(config->base_address, clk->module,
+		ret = r8a7795_cpg_core_clock_endisable(DEVICE_MMIO_GET(dev), clk->module,
 						       clk->rate, enable);
 	}
 
@@ -105,7 +109,6 @@ static int r8a7795_cpg_get_rate(const struct device *dev,
 				clock_control_subsys_t sys,
 				uint32_t *rate)
 {
-	const struct r8a7795_cpg_mssr_config *config = dev->config;
 	struct rcar_cpg_clk *clk = (struct rcar_cpg_clk *)sys;
 	uint32_t val;
 	int ret = 0;
@@ -116,7 +119,7 @@ static int r8a7795_cpg_get_rate(const struct device *dev,
 
 	switch (clk->module) {
 	case R8A7795_CLK_CANFD:
-		val = sys_read32(config->base_address + CANFDCKCR);
+		val = sys_read32(DEVICE_MMIO_GET(dev) + CANFDCKCR);
 		if (val & CANFDCKCR_CKSTP) {
 			*rate = 0;
 		} else {
@@ -137,7 +140,7 @@ static int r8a7795_cpg_get_rate(const struct device *dev,
 
 static int r8a7795_cpg_mssr_init(const struct device *dev)
 {
-	ARG_UNUSED(dev);
+	DEVICE_MMIO_MAP(dev, K_MEM_CACHE_NONE);
 	return 0;
 }
 
@@ -149,13 +152,15 @@ static const struct clock_control_driver_api r8a7795_cpg_mssr_api = {
 
 #define R8A7795_MSSR_INIT(inst)							  \
 	static struct r8a7795_cpg_mssr_config r8a7795_cpg_mssr##inst##_config = { \
-		.base_address = DT_INST_REG_ADDR(inst)				  \
+		DEVICE_MMIO_ROM_INIT(DT_DRV_INST(inst))				  \
 	};									  \
+	static struct r8a7795_cpg_mssr_data r8a7795_cpg_mssr##inst##_data;	  \
 										  \
 	DEVICE_DT_INST_DEFINE(inst,						  \
 			      &r8a7795_cpg_mssr_init,				  \
 			      NULL,						  \
-			      NULL, &r8a7795_cpg_mssr##inst##_config,		  \
+			      &r8a7795_cpg_mssr##inst##_data,			  \
+			      &r8a7795_cpg_mssr##inst##_config,			  \
 			      PRE_KERNEL_1,					  \
 			      CONFIG_CLOCK_CONTROL_INIT_PRIORITY,		  \
 			      &r8a7795_cpg_mssr_api);

@@ -32,14 +32,22 @@ int rcar_cpg_mstp_clock_endisable(uint32_t base_address, uint32_t bit,
 
 	key = irq_lock();
 
-	reg_val = sys_read32(base_address + mstpcr[reg]);
+#ifndef CONFIG_CPU_CORTEX_R7
+	reg_val = sys_read32(base_address + smstpcr[reg]);
+#else
+	reg_val = sys_read32(base_address + RMSTPCR(reg));
+#endif
 	if (enable) {
 		reg_val &= ~bitmask;
 	} else {
 		reg_val |= bitmask;
 	}
 
-	sys_write32(reg_val, base_address + mstpcr[reg]);
+#ifndef CONFIG_CPU_CORTEX_R7
+	sys_write32(reg_val, base_address + smstpcr[reg]);
+#else
+	sys_write32(reg_val, base_address + RMSTPCR(reg));
+#endif
 	if (!enable) {
 		rcar_cpg_reset(base_address, reg, bit);
 	}
