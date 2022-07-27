@@ -37,12 +37,12 @@
         } GROUP_DATA_LINK_IN(RAMABLE_REGION, ROMABLE_REGION)
 
 #if defined(CONFIG_XEN_INITIAL_DOMAIN)
-        SECTION_DATA_PROLOGUE(uboot_domu,,)
+        SECTION_DATA_PROLOGUE(kernel_domu,,)
         {
 			. = ALIGN(64);
-			__uboot_domu_start = .;
-			KEEP(*(".uboot_domu"));
-			__uboot_domu_end = .;
+			__kernel_domu_start = .;
+			KEEP(*(".kernel_domu"));
+			__kernel_domu_end = .;
         } GROUP_DATA_LINK_IN(RAMABLE_REGION, ROMABLE_REGION)
 
         SECTION_DATA_PROLOGUE(dtb_domu,,)

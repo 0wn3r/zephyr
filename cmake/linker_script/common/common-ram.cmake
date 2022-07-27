@@ -18,9 +18,9 @@ zephyr_linker_section_configure(SECTION device_states
 )
 
 if(CONFIG_XEN_INITIAL_DOMAIN)
-zephyr_linker_section(NAME uboot_domu GROUP DATA_REGION)
-zephyr_linker_section_configure(SECTION uboot_domu
-  KEEP INPUT ".uboot_domu""
+zephyr_linker_section(NAME kernel_domu GROUP DATA_REGION)
+zephyr_linker_section_configure(SECTION kernel_domu
+  KEEP INPUT ".kernel_domu""
 )
 
 zephyr_linker_section(NAME dtb_domu GROUP DATA_REGION)
