@@ -9,7 +9,9 @@
 #define DT_DRV_COMPAT renesas_r8a7795_cpg_mssr
 
 #include <errno.h>
+#ifdef CONFIG_SOC_SERIES_RCAR_GEN3
 #include <soc.h>
+#endif /* CONFIG_SOC_SERIES_RCAR_GEN3 */
 #include <zephyr/drivers/clock_control.h>
 #include <zephyr/drivers/clock_control/renesas_cpg_mssr.h>
 #include <zephyr/dt-bindings/clock/renesas_cpg_mssr.h>

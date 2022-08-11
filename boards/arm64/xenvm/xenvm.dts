@@ -16,6 +16,8 @@
 #include <mem.h>
 #include <arm64/armv8-a.dtsi>
 #include <zephyr/dt-bindings/interrupt-controller/arm-gic.h>
+#include <zephyr/dt-bindings/clock/renesas_cpg_mssr.h>
+#include <zephyr/dt-bindings/gpio/gpio.h>
 
 / {
 	model = "XENVM-4.15";
@@ -60,6 +62,24 @@
 		reg = <0x00 0xf1010000 0x00 0x1000 0x00 0xf1020000 0x00 0x2000>;
 	};
 
+	cpg: clock-controller@e6150000 {
+			compatible = "renesas,r8a7795-cpg-mssr";
+			reg = <0x0 0xe6150000 0x0 0x1000>;
+			#clock-cells = <2>;
+			status = "disabled";
+	};
+
+	gpio6: gpio@e6055400 {
+			compatible = "renesas,rcar-gpio";
+			reg = <0x0 0xe6055400 0x0 0x50>;
+			#gpio-cells = <2>;
+			gpio-controller;
+			interrupt-parent = <&gic>;
+			interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY>;
+			clocks = <&cpg CPG_MOD 906>;
+			status = "disabled";
+	};
+
 	timer {
 		compatible = "arm,armv8-timer";
 		interrupts = <GIC_PPI 0x0d IRQ_TYPE_LEVEL IRQ_DEFAULT_PRIORITY
@@ -78,5 +98,18 @@
 	xen_consoleio_hvc: hvc {
 		compatible = "xen,hvc-uart";
 		status = "okay";
+	};
+
+	leds {
+		compatible = "gpio-leds";
+		user_led_1: led_5 {
+			gpios = <&gpio6 12 GPIO_ACTIVE_HIGH>;
+			label = "LED 5";
+		};
+		status = "disabled";
+	};
+
+	aliases {
+		led0 = &user_led_1;
 	};
 };
