@@ -198,6 +198,12 @@ static log_timestamp_t default_lf_get_timestamp(void)
 		k_uptime_get() : k_uptime_get_32();
 }
 
+static log_timestamp_t physical_timer_get_timestamp(void)
+{
+	return IS_ENABLED(CONFIG_LOG_TIMESTAMP_64BIT) ?
+		read_cntpct_el0() : (uint32_t)read_cntpct_el0();
+}
+
 void log_core_init(void)
 {
 	uint32_t freq;
@@ -214,7 +220,10 @@ void log_core_init(void)
 	}
 
 	/* Set default timestamp. */
-	if (sys_clock_hw_cycles_per_sec() > 1000000) {
+	if (IS_ENABLED(CONFIG_LOG_PHYSICAL_TIMESTAMP)) {
+		_timestamp_func = physical_timer_get_timestamp;
+		freq = sys_clock_hw_cycles_per_sec();
+	} else if (sys_clock_hw_cycles_per_sec() > 1000000) {
 		_timestamp_func = default_lf_get_timestamp;
 		freq = 1000U;
 	} else {

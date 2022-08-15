@@ -124,6 +124,10 @@ config LOG_TRACE_SHORT_TIMESTAMP
 config LOG_TIMESTAMP_64BIT
 	bool "Use 64 bit timestamp"
 
+config LOG_PHYSICAL_TIMESTAMP
+	depends on ARM64
+	bool "Use physical timestamp counter value on ARM64"
+
 config LOG_SPEED
 	bool "Prefer performance over size"
 	depends on LOG_MODE_DEFERRED
