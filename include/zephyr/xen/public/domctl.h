@@ -37,7 +37,7 @@
 #include "grant_table.h"
 #include "memory.h"
 
-#define XEN_DOMCTL_INTERFACE_VERSION 0x00000014
+#define XEN_DOMCTL_INTERFACE_VERSION 0x00000015
 
 /*
  * NB. xen_domctl.domain is an IN/OUT parameter for this operation.
@@ -105,6 +105,9 @@ struct xen_domctl_createdomain {
     /* Per-vCPU buffer size in bytes.  0 to disable. */
     uint32_t vmtrace_size;
 
+    /* CPU pool to use; specify 0 or a specific existing pool */
+    uint32_t cpupool_id;
+
     struct xen_arch_domainconfig arch;
 };
 
@@ -112,6 +115,7 @@ struct xen_domctl_createdomain {
 struct xen_domctl_getdomaininfo {
     /* OUT variables. */
     domid_t  domain;              /* Also echoed in domctl.domain */
+    uint16_t pad1;
  /* Domain is scheduled to die. */
 #define _XEN_DOMINF_dying     0
 #define XEN_DOMINF_dying      (1U<<_XEN_DOMINF_dying)
@@ -156,6 +160,8 @@ struct xen_domctl_getdomaininfo {
     uint32_t ssidref;
     xen_domain_handle_t handle;
     uint32_t cpupool;
+    uint8_t gpaddr_bits; /* Guest physical address space size. */
+    uint8_t pad2[7];
     struct xen_arch_domainconfig arch_config;
 };
 typedef struct xen_domctl_getdomaininfo xen_domctl_getdomaininfo_t;
